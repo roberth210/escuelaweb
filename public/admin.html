@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>Panel Admin</title>
+
+<style>
+
+body{
+margin:0;
+font-family:Arial;
+background:#0a0a0a;
+color:white;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+}
+
+.panel{
+background:#111;
+padding:40px;
+border-radius:20px;
+width:400px;
+box-shadow:0 0 30px #00aaff;
+}
+
+input{
+width:100%;
+padding:10px;
+margin:5px;
+border:none;
+border-radius:8px;
+}
+
+button{
+padding:10px;
+margin:5px;
+border:none;
+border-radius:8px;
+background:#00aaff;
+color:white;
+cursor:pointer;
+}
+
+.user{
+background:#222;
+padding:8px;
+margin:5px;
+border-radius:6px;
+display:flex;
+justify-content:space-between;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="panel">
+
+<h2>Panel Admin</h2>
+
+<h3>Crear Usuario</h3>
+
+<input id="user" placeholder="usuario">
+<input id="pass" placeholder="password">
+
+<button onclick="crear()">Crear</button>
+
+<h3>Usuarios</h3>
+
+<div id="lista"></div>
+
+</div>
+
+<script>
+
+function crear(){
+
+fetch("/create",{
+
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({
+
+user:document.getElementById("user").value,
+pass:document.getElementById("pass").value
+
+})
+
+})
+.then(()=>{
+
+load()
+
+})
+
+}
+
+function borrar(user){
+
+fetch("/delete",{
+
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({user})
+
+})
+.then(()=>{
+
+load()
+
+})
+
+}
+
+function load(){
+
+fetch("/users")
+.then(r=>r.json())
+.then(data=>{
+
+let html=""
+
+data.forEach(u=>{
+
+html+=`
+<div class="user">
+
+${u.user}
+
+<button onclick="borrar('${u.user}')">Eliminar</button>
+
+</div>
+`
+
+})
+
+document.getElementById("lista").innerHTML=html
+
+})
+
+}
+
+load()
+
+</script>
+
+</body>
+</html>

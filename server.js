@@ -109,17 +109,13 @@ app.post("/create", (req, res) => {
    VER USUARIOS
 ========================= */
 
-app.get("/users", (req, res) => {
+app.get("/ranking",(req,res)=>{
 
-  db.all("SELECT user FROM users", (err, rows) => {
-
-    if (err) {
-      res.json([])
-    } else {
-      res.json(rows)
-    }
-
-  })
+db.all(
+"SELECT user,points FROM ranking ORDER BY points DESC LIMIT 10",
+(err,rows)=>{
+res.json(rows)
+})
 
 })
 

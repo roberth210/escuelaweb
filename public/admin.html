@@ -1,150 +1,232 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-
+<meta charset="UTF-8">
 <title>Panel Admin</title>
 
 <style>
 
 body{
-margin:0;
 font-family:Arial;
-background:#0a0a0a;
+background:#0f172a;
 color:white;
-display:flex;
-justify-content:center;
-align-items:center;
-height:100vh;
+margin:0;
+padding:40px;
+}
+
+h1{
+text-align:center;
+margin-bottom:40px;
 }
 
 .panel{
-background:#111;
-padding:40px;
-border-radius:20px;
-width:400px;
-box-shadow:0 0 30px #00aaff;
+max-width:900px;
+margin:auto;
+}
+
+.box{
+background:#1e293b;
+padding:20px;
+border-radius:10px;
+margin-bottom:25px;
 }
 
 input{
-width:100%;
 padding:10px;
-margin:5px;
 border:none;
-border-radius:8px;
+border-radius:5px;
+margin-right:10px;
 }
 
 button{
-padding:10px;
-margin:5px;
+padding:10px 15px;
 border:none;
-border-radius:8px;
-background:#00aaff;
+background:#3b82f6;
 color:white;
+border-radius:5px;
 cursor:pointer;
 }
 
-.user{
-background:#222;
-padding:8px;
-margin:5px;
-border-radius:6px;
-display:flex;
-justify-content:space-between;
+button:hover{
+background:#2563eb;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+margin-top:15px;
+}
+
+td,th{
+padding:10px;
+border-bottom:1px solid #334155;
+text-align:left;
+}
+
+.delete{
+background:#ef4444;
 }
 
 </style>
-
 </head>
 
 <body>
 
+<h1>⚙️ PANEL ADMIN</h1>
+
 <div class="panel">
 
-<h2>Panel Admin</h2>
-
-<h3>Crear Usuario</h3>
+<div class="box">
+<h2>Crear Usuario</h2>
 
 <input id="user" placeholder="usuario">
 <input id="pass" placeholder="password">
 
 <button onclick="crear()">Crear</button>
 
-<h3>Usuarios</h3>
-
-<div id="lista"></div>
+<p id="msg"></p>
 
 </div>
+
+
+<div class="box">
+<h2>Usuarios</h2>
+
+<button onclick="cargar()">Actualizar</button>
+
+<table>
+
+<thead>
+<tr>
+<th>Usuario</th>
+<th>Acción</th>
+</tr>
+</thead>
+
+<tbody id="tabla"></tbody>
+
+</table>
+
+</div>
+
+
+<div class="box">
+
+<h2>🏆 Top Ranking</h2>
+
+<button onclick="ranking()">Ver Ranking</button>
+
+<table>
+
+<thead>
+<tr>
+<th>Jugador</th>
+<th>Puntos</th>
+</tr>
+</thead>
+
+<tbody id="rank"></tbody>
+
+</table>
+
+</div>
+
+</div>
+
 
 <script>
 
-function crear(){
+async function crear(){
 
-fetch("/create",{
+const user=document.getElementById("user").value
+const pass=document.getElementById("pass").value
 
+const res=await fetch("/create",{
 method:"POST",
-headers:{"Content-Type":"application/json"},
-body:JSON.stringify({
-
-user:document.getElementById("user").value,
-pass:document.getElementById("pass").value
-
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({user,pass})
 })
 
-})
-.then(()=>{
+const data=await res.json()
 
-load()
+document.getElementById("msg").innerText=data.ok ? "Usuario creado" : "Error"
 
-})
+cargar()
 
 }
 
-function borrar(user){
 
-fetch("/delete",{
 
-method:"POST",
-headers:{"Content-Type":"application/json"},
-body:JSON.stringify({user})
+async function cargar(){
 
-})
-.then(()=>{
+const res=await fetch("/users")
 
-load()
-
-})
-
-}
-
-function load(){
-
-fetch("/users")
-.then(r=>r.json())
-.then(data=>{
+const users=await res.json()
 
 let html=""
 
-data.forEach(u=>{
+users.forEach(u=>{
 
 html+=`
-<div class="user">
-
-${u.user}
-
-<button onclick="borrar('${u.user}')">Eliminar</button>
-
-</div>
+<tr>
+<td>${u.user}</td>
+<td>
+<button class="delete" onclick="eliminar('${u.user}')">Eliminar</button>
+</td>
+</tr>
 `
 
 })
 
-document.getElementById("lista").innerHTML=html
-
-})
+document.getElementById("tabla").innerHTML=html
 
 }
 
-load()
+
+
+async function eliminar(user){
+
+await fetch("/delete",{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({user})
+})
+
+cargar()
+
+}
+
+
+
+async function ranking(){
+
+const res=await fetch("/ranking")
+
+const data=await res.json()
+
+let html=""
+
+data.forEach(r=>{
+
+html+=`
+<tr>
+<td>${r.user}</td>
+<td>${r.points}</td>
+</tr>
+`
+
+})
+
+document.getElementById("rank").innerHTML=html
+
+}
+
+
+cargar()
 
 </script>
 

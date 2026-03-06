@@ -1,16 +1,18 @@
 {
   "name": "escuelaweb",
   "version": "1.0.0",
+  "description": "Servidor web con Express, Socket.io y SQLite",
   "main": "server.js",
   "engines": {
     "node": "18.x"
   },
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "build": "npm install"
   },
   "dependencies": {
     "express": "^4.18.2",
     "socket.io": "^4.7.2",
-    "sqlite3": "^5.1.6"
+    "sqlite3": "^5.1.7"
   }
 }

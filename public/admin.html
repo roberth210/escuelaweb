@@ -2,69 +2,110 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Panel Admin</title>
+<title>Panel Admin Ultra</title>
 
 <style>
 
 body{
 font-family:Arial;
-background:#0f172a;
+background:linear-gradient(135deg,#020617,#0f172a,#020617);
 color:white;
 margin:0;
 padding:40px;
+min-height:100vh;
 }
 
 h1{
 text-align:center;
+font-size:40px;
 margin-bottom:40px;
+background:linear-gradient(90deg,#60a5fa,#22d3ee);
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
 }
 
 .panel{
-max-width:900px;
+max-width:1100px;
 margin:auto;
 }
 
 .box{
-background:#1e293b;
-padding:20px;
-border-radius:10px;
-margin-bottom:25px;
+background:rgba(30,41,59,0.6);
+backdrop-filter:blur(10px);
+border:1px solid rgba(255,255,255,0.1);
+padding:25px;
+border-radius:15px;
+margin-bottom:30px;
+box-shadow:0 0 25px rgba(0,0,0,0.5);
+transition:0.3s;
+}
+
+.box:hover{
+transform:scale(1.01);
+box-shadow:0 0 30px rgba(96,165,250,0.3);
+}
+
+h2{
+margin-top:0;
+color:#60a5fa;
 }
 
 input{
-padding:10px;
+padding:12px;
 border:none;
-border-radius:5px;
+border-radius:8px;
 margin-right:10px;
+background:#0f172a;
+color:white;
+border:1px solid #334155;
 }
 
 button{
-padding:10px 15px;
+padding:12px 18px;
 border:none;
-background:#3b82f6;
+background:linear-gradient(90deg,#3b82f6,#06b6d4);
 color:white;
-border-radius:5px;
+border-radius:8px;
 cursor:pointer;
+font-weight:bold;
+transition:0.2s;
 }
 
 button:hover{
-background:#2563eb;
+transform:scale(1.05);
+box-shadow:0 0 10px #38bdf8;
+}
+
+.delete{
+background:linear-gradient(90deg,#ef4444,#dc2626);
 }
 
 table{
 width:100%;
 border-collapse:collapse;
 margin-top:15px;
+background:#020617;
+border-radius:10px;
+overflow:hidden;
+}
+
+thead{
+background:#0f172a;
 }
 
 td,th{
-padding:10px;
-border-bottom:1px solid #334155;
+padding:12px;
+border-bottom:1px solid #1e293b;
 text-align:left;
 }
 
-.delete{
-background:#ef4444;
+tr:hover{
+background:#0f172a;
+}
+
+.status{
+margin-top:10px;
+color:#22c55e;
 }
 
 </style>
@@ -72,25 +113,25 @@ background:#ef4444;
 
 <body>
 
-<h1>⚙️ PANEL ADMIN</h1>
+<h1>⚙️ PANEL ADMIN ULTRA</h1>
 
 <div class="panel">
 
 <div class="box">
-<h2>Crear Usuario</h2>
+<h2>➕ Crear Usuario</h2>
 
 <input id="user" placeholder="usuario">
 <input id="pass" placeholder="password">
 
-<button onclick="crear()">Crear</button>
+<button onclick="crear()">Crear Usuario</button>
 
-<p id="msg"></p>
+<p id="msg" class="status"></p>
 
 </div>
 
 
 <div class="box">
-<h2>Usuarios</h2>
+<h2>👥 Usuarios Registrados</h2>
 
 <button onclick="cargar()">Actualizar</button>
 
@@ -112,9 +153,9 @@ background:#ef4444;
 
 <div class="box">
 
-<h2>🏆 Top Ranking</h2>
+<h2>🏆 Ranking Global</h2>
 
-<button onclick="ranking()">Ver Ranking</button>
+<button onclick="ranking()">Actualizar Ranking</button>
 
 <table>
 
@@ -151,7 +192,7 @@ body:JSON.stringify({user,pass})
 
 const data=await res.json()
 
-document.getElementById("msg").innerText=data.ok ? "Usuario creado" : "Error"
+document.getElementById("msg").innerText=data.ok ? "✅ Usuario creado" : "❌ Error al crear"
 
 cargar()
 
@@ -173,7 +214,7 @@ html+=`
 <tr>
 <td>${u.user}</td>
 <td>
-<button class="delete" onclick="eliminar('${u.user}')">Eliminar</button>
+<button class="delete" onclick="eliminar('${u.user}')">Eliminar Usuario</button>
 </td>
 </tr>
 `
@@ -187,6 +228,8 @@ document.getElementById("tabla").innerHTML=html
 
 
 async function eliminar(user){
+
+if(!confirm("¿Eliminar usuario completamente?")) return
 
 await fetch("/delete",{
 method:"POST",

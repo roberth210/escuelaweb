@@ -112,9 +112,11 @@ app.post("/create", (req, res) => {
 app.get("/ranking",(req,res)=>{
 
 db.all(
-"SELECT user,points FROM ranking ORDER BY points DESC LIMIT 10",
+"SELECT user,points FROM ranking ORDER BY points DESC",
 (err,rows)=>{
+
 res.json(rows)
+
 })
 
 })
